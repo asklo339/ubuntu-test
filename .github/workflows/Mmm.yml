@@ -1,0 +1,15 @@
+name: Debug Shell via Tmate
+on:
+  workflow_dispatch:  # Allows you to trigger the workflow manually
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Tmate session
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Keep session alive indefinitely
+        run: |
+          while true; do
+            sleep 60
+          done
