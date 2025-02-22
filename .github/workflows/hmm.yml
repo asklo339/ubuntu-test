@@ -1,0 +1,34 @@
+name: SSH Server without Tmate
+on:
+  workflow_dispatch:
+jobs:
+  ssh-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install OpenSSH Server
+        run: |
+          sudo apt update
+          sudo apt install -y openssh-server
+          # Ensure the SSH service is running
+          sudo service ssh start
+          # Optionally, show SSH status
+          sudo service ssh status
+
+      - name: Download and Configure ngrok
+        env:
+          NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+        run: |
+          # Download ngrok
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
+          # Authenticate ngrok
+          ./ngrok authtoken $NGROK_TOKEN
+          # Start a TCP tunnel on port 22 (SSH) in the background
+          ./ngrok tcp 22 &
+          # Wait a moment for ngrok to initialize
+          sleep 10
+          # Print tunnel info (the public address for SSH)
+          curl -s http://localhost:4040/api/tunnels
+
+      - name: Keep session alive
+        run: sleep 3600
