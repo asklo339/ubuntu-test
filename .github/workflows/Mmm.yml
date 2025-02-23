@@ -1,4 +1,4 @@
-name: Debug Shell via Tmate
+name: Debug Shell via Tmate mmm
 on:
   workflow_dispatch:  # Allows you to trigger the workflow manually
 jobs:
