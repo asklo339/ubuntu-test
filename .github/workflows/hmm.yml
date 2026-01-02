@@ -1,20 +1,22 @@
-name: Infinite Debug Shell
+name: Temporary Debug Shell via Tmate
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  debug:
+  tmate-debug:
     runs-on: ubuntu-22.04
-    timeout-minutes: 360
-
     steps:
-      - name: Start Tmate
+      - name: Start temporary Tmate session
         uses: mxschmitt/action-tmate@v3
         with:
-          limit-access-to-actor: true
+          # No need for limit-access-to-actor
+          # A key will be generated automatically
+          wait-for-ssh: true  # Wait until tmate session is ready
 
-      - name: Keep alive
+      - name: Keep session alive
         run: |
-          echo "Session will auto-expire at 6h"
-          sleep 21600
+          echo "Tmate session running. This will last until the job ends."
+          while true; do
+            sleep 60
+          done
