@@ -8,15 +8,22 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Start temporary Tmate session
+        id: tmate  # Critical: Assign ID to capture outputs
         uses: mxschmitt/action-tmate@v3
         with:
-          # No need for limit-access-to-actor
-          # A key will be generated automatically
           wait-for-ssh: true  # Wait until tmate session is ready
+
+      - name: Display connection command with compression disabled
+        run: |
+          echo "✅ Tmate session ready! Connect using this command:"
+          echo "ssh -o Compression=no ${{ steps.tmate.outputs.session-ssh }}"
+          echo ""
+          echo "💡 If you still encounter issues, try:"
+          echo "ssh -o Compression=no -o PubkeyAcceptedKeyTypes=+ssh-rsa ${{ steps.tmate.outputs.session-ssh }}"
+        shell: bash
 
       - name: Keep session alive
         run: |
-          echo "Tmate session running. This will last until the job ends."
-          while true; do
-            sleep 60
-          done
+          echo "⏸️ Session active. Workflow will pause until canceled or timed out..."
+          sleep infinity  # More efficient than loop
+        timeout-minutes: 60  # Safety cutoff (adjust as needed)
